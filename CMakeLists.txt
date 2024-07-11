@@ -10,4 +10,10 @@ include_directories(.)
 
 add_executable(webserver
     src/main.cpp
+        src/server.h
+        src/server.cpp
+        src/http.cpp
+        src/http.h
 )
+
+target_link_libraries(webserver pthread)
