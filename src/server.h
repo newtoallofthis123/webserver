@@ -5,32 +5,36 @@
 #ifndef WEBSERVER_SERVER_H
 #define WEBSERVER_SERVER_H
 
-#include <sys/socket.h>
 #include <netinet/in.h>
-#include <vector>
+#include <sys/socket.h>
+
+#include <mutex>
 #include <thread>
+#include <vector>
+
+// Just for testing sake
+#include "src/http.h"
 
 class Server {
-private:
-		int port{};
-		sockaddr_in address{};
-		int server_fd{};
-		int new_socket{};
-		size_t value_read{};
-		int address_len = sizeof address;
-		std::vector<std::thread> threads;
-		std::mutex mtx;
-		static std::atomic<bool> running;
-		static void handleSignal(int signal);
+ private:
+  int port{};
+  sockaddr_in address{};
+  int server_fd{};
+  int new_socket{};
+  size_t value_read{};
+  int address_len = sizeof address;
+  std::vector<std::thread> threads;
+  std::mutex mtx;
+  Http http;
 
-public:
-		explicit Server(int port);
+ public:
+  explicit Server(int port);
 
-		void start();
+  void start();
 
-		void handle(int client_socket);
+  void handle(int client_socket);
 
-		~Server();
+  ~Server();
 };
 
-#endif //WEBSERVER_SERVER_H
+#endif  // WEBSERVER_SERVER_H

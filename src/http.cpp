@@ -3,3 +3,54 @@
 //
 
 #include "http.h"
+
+#include <sstream>
+
+std::string Http::test_response(const std::string& body) {
+  auto default_res = std::string(default_http_response);
+  default_res += "Content-Length: " + std::to_string(body.length()) + "\r\n";
+  default_res += "Content-Type: text/html\r\n";
+  default_res += "Connection: close\r\n\r\n";
+  default_res += body;
+  return default_res;
+}
+
+Request Http::parseRequest(const std::string& request) {
+  Request req;
+  std::istringstream iss(request);
+  std::string line;
+
+  // Parse the request line
+  if (std::getline(iss, line)) {
+    std::istringstream lineStream(line);
+    lineStream >> req.method >> req.path >> req.version;
+  }
+
+  // Parse headers
+  while (std::getline(iss, line) && !line.empty()) {
+    auto colonPos = line.find(':');
+    if (colonPos != std::string::npos) {
+      std::string key = line.substr(0, colonPos);
+      std::string value = line.substr(colonPos + 1);
+
+      // Trim leading and trailing whitespace
+      key.erase(0, key.find_first_not_of(" \t"));
+      key.erase(key.find_last_not_of(" \t") + 1);
+      value.erase(0, value.find_first_not_of(" \t"));
+      value.erase(value.find_last_not_of(" \t") + 1);
+
+      req.headers[key] = value;
+    }
+  }
+
+  // Parse body (if any)
+  std::string bodyLine;
+  while (std::getline(iss, bodyLine)) {
+    req.body += bodyLine + "\n";
+  }
+  if (!req.body.empty()) {
+    req.body.pop_back();
+  }
+
+  return req;
+}
