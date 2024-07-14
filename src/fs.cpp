@@ -69,7 +69,7 @@ File FileReader::get(const std::string &filename) {
   // check if file exists
   if (!std::filesystem::exists(file.path)) {
     std::cerr << "File " << file.path << " does not exist" << std::endl;
-    exit(EXIT_FAILURE);
+    return this->not_found;
   }
 
   files.push_back(file);

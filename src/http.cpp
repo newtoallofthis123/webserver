@@ -55,3 +55,31 @@ Request Http::build_request(const std::string& request) {
 
   return req;
 }
+
+Response Http::build_response(int status_code, const std::string& body) {
+  Response res;
+  res.status_code = status_code;
+  res.status_message = "OK";
+  res.version = "HTTP/1.1";
+
+  res.headers["Content-Type"] = "text/html";
+  res.headers["Content-Encoding"] = "UTF-8";
+  res.headers["Content-Length"] = std::to_string(body.length());
+  res.headers["Connection"] = "close";
+
+  // todo: add in the correct headers based on the file type
+
+  res.body = body;
+  return res;
+}
+
+std::string Response::to_string() {
+  std::stringstream response_stream;
+  response_stream << version << " " << status_code << " " << status_message
+                  << "\r\n";
+  for (const auto& header : headers) {
+    response_stream << header.first << ": " << header.second << "\r\n";
+  }
+  response_stream << "\r\n" << body;
+  return response_stream.str();
+}

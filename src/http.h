@@ -21,7 +21,6 @@ struct Response {
   std::string body;
   std::string other;
 
-  Response(int status_code, const std::string &body = "");
   std::string to_string();
 };
 

@@ -68,8 +68,21 @@ void Server::handle(int client_socket) {
     request_str = std::string(buffer);
     req = http.build_request(request_str);
 
-    std::string response = http.test_response(fs.read_to_str("index.html"));
-    send(client_socket, response.c_str(), response.length(), 0);
+    if (req.path == "/") {
+      req.path = "/index.html";
+    }
+
+    std::string body{};
+    if (fs.get(req.path) == fs.not_found) {
+      fs.not_found.path = req.path;
+      body = fs.not_found_file();
+    } else {
+      body = fs.read_to_str(req.path);
+    }
+
+    auto response = http.build_response(200, body);
+    send(client_socket, response.to_string().c_str(),
+         response.to_string().length(), 0);
   }
 
   // close(client_socket);
