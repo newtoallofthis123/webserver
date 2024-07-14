@@ -4,7 +4,7 @@
 
 #include "src/http.h"
 
-Server::Server(int port) {
+Server::Server(int port, const std::string &dirname) : fs(dirname) {
   this->port = port;
   this->address.sin_family = AF_INET;
   this->address.sin_addr.s_addr = INADDR_ANY;
@@ -66,9 +66,9 @@ void Server::handle(int client_socket) {
   value_read = read(client_socket, buffer, 1024);
   if (value_read > 0) {
     request_str = std::string(buffer);
-    req = http.parseRequest(request_str);
+    req = http.build_request(request_str);
 
-    std::string response = http.test_response("Hello World");
+    std::string response = http.test_response(fs.read_to_str("index.html"));
     send(client_socket, response.c_str(), response.length(), 0);
   }
 

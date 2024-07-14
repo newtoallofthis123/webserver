@@ -14,6 +14,8 @@ add_executable(webserver
         src/server.cpp
         src/http.cpp
         src/http.h
+        src/fs.h
+        src/fs.cpp
 )
 
 target_link_libraries(webserver pthread)

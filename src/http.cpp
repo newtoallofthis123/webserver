@@ -7,15 +7,16 @@
 #include <sstream>
 
 std::string Http::test_response(const std::string& body) {
-  auto default_res = std::string(default_http_response);
-  default_res += "Content-Length: " + std::to_string(body.length()) + "\r\n";
-  default_res += "Content-Type: text/html\r\n";
-  default_res += "Connection: close\r\n\r\n";
-  default_res += body;
-  return default_res;
+  std::stringstream response_stream;
+  response_stream << "HTTP/1.1 200 OK\r\n";
+  response_stream << "Content-Type: text/html\r\n";
+  response_stream << "Content-Length: " << body.length() << "\r\n";
+  response_stream << "Connection: close\r\n\r\n";
+  response_stream << body;
+  return response_stream.str();
 }
 
-Request Http::parseRequest(const std::string& request) {
+Request Http::build_request(const std::string& request) {
   Request req;
   std::istringstream iss(request);
   std::string line;

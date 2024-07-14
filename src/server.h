@@ -12,7 +12,7 @@
 #include <thread>
 #include <vector>
 
-// Just for testing sake
+#include "src/fs.h"
 #include "src/http.h"
 
 class Server {
@@ -26,9 +26,10 @@ class Server {
   std::vector<std::thread> threads;
   std::mutex mtx;
   Http http;
+  FileReader fs;
 
  public:
-  explicit Server(int port);
+  explicit Server(int port, const std::string &dirname = "www");
 
   void start();
 

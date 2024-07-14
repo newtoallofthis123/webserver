@@ -3,7 +3,6 @@
 
 #include <map>
 #include <string>
-#include <vector>
 
 struct Request {
   std::string method;
@@ -21,6 +20,9 @@ struct Response {
   std::map<std::string, std::string> headers;
   std::string body;
   std::string other;
+
+  Response(int status_code, const std::string &body = "");
+  std::string to_string();
 };
 
 class Http {
@@ -30,9 +32,8 @@ class Http {
 
   static std::string test_response(const std::string &body = "");
 
-  static Request parseRequest(const std::string &request);
-
-  static std::vector<std::string> split(const std::string &str, char delim);
+  static Request build_request(const std::string &request);
+  static Response build_response(int status_code, const std::string &body = "");
 };
 
 #endif  // WEBSERVER_HTTP_H
